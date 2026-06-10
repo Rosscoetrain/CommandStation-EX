@@ -66,7 +66,7 @@ public:
   static void writeCVBitMain(int cab, int cv, byte bNum, bool bValue);
 
 //RT
-  static void pomWriteAccessory(int cab, int cv, byte bValue);
+  static void pomWriteAccessoryCV(int cab, int cv, byte bValue, bool Ext);
 //RT
 
   static void setFunction(int cab, byte fByte, byte eByte);
