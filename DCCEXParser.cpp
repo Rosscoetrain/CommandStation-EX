@@ -504,12 +504,31 @@ void DCCEXParser::parseOne(Print *stream, byte *com, RingStream * ringStream)
             return;
         break;
 
+//RT
+/*
 #ifndef DISABLE_PROG
     case 'w': // WRITE CV on MAIN <w CAB CV VALUE>
       if (params != 3)
 	break;
       DCC::writeCVByteMain(p[0], p[1], p[2]);
       return;
+*/
+
+    case 'w':  // WRITE cv on MAIN
+      if (params < 3)
+      break;
+      if (params == 3)  // WRITE loco CV on MAIN <w CAB CV VALUE>
+       {
+        DCC::writeCVByteMain(p[0], p[1], p[2]);
+        return;
+       }
+      switch (p[0])
+        {
+        case "A":
+          DCC::pomWriteAccessory(p[1], p[2], p[3]);  // WRITE basic accessory CV on MAIN <wa address CV VALUE>
+          return;
+        }
+      break;
 
 #ifdef HAS_ENOUGH_MEMORY    
     case 'r': // READ CV on MAIN <r CAB CV>  Requires Railcom

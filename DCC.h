@@ -64,6 +64,11 @@ public:
   static void readCVByteMain(int cab, int cv, ACK_CALLBACK callback);
   
   static void writeCVBitMain(int cab, int cv, byte bNum, bool bValue);
+
+//RT
+  static void pomWriteAccessory(int cab, int cv, byte bValue);
+//RT
+
   static void setFunction(int cab, byte fByte, byte eByte);
   static bool setFn(int cab, int16_t functionNumber, bool on);
   static void changeFn(int cab, int16_t functionNumber);

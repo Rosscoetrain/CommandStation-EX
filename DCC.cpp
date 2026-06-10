@@ -473,6 +473,42 @@ void DCC::writeCVByteMain(int cab, int cv, byte bValue)  {
   DCCQueue::scheduleDCCPacket(b, nB, 4,cab);
 }
 
+
+void DCC::pomWriteAccessory(int cab, int cv, byte bValue) {
+  byte b[5];
+  int nB = 0;
+
+  // Extract precise NMRA address bits from cab (0-indexed 11-bit address space)
+  byte a10a8 = (cab >> 8) & 0x07; // Top 3 bits
+  byte a7a2  = (cab >> 2) & 0x3F; // Middle 6 bits
+  byte a1a0  = cab & 0x03;        // Bottom 2 bits
+
+  // Byte 1: 10A7A6A5A4A3A2
+  b[nB++] = 0x80 | a7a2;
+
+  // Byte 2: 1Ā10Ā9Ā81A1A00 -> (Ā indicates ones' complement)
+  // Bit 7 = 1
+  // Bits 4-6 = inverted a10a8
+  // Bit 3 = 1 (Programming device default write flag)
+  // Bits 1-2 = a1a0
+  // Bit 0 = 0
+  byte inverted_high = (~a10a8) & 0x07;
+  b[nB++] = 0x80 | (inverted_high << 4) | 0x08 | (a1a0 << 1) | 0x00;
+
+  // Byte 3 & 4: Configuration Variable Long Form (CV - 1)
+  int cvAddress = cv - 1;
+  b[nB++] = 0xEC | ((cvAddress >> 8) & 0x03);
+  b[nB++] = cvAddress & 0xFF;
+
+  // Byte 5: Data
+  b[nB++] = bValue;
+
+  DCCQueue::scheduleDCCPacket(b, nB, 4, cab);
+}
+
+
+
+
 //
 // readCVByteMain: Read a byte with PoM on main.
 // This requires Railcom active 
